@@ -39,7 +39,7 @@ const signUpHandler = async (event) => {
       if (user.message) {
         messageHandler(response.data.message, "error");
       } else {
-        console.log(user);
+        alert("User created");
         messageHandler("Signup successfull", "success");
         window.location.href = "../login/login.html";
         userName.value = "";
@@ -49,6 +49,7 @@ const signUpHandler = async (event) => {
       }
     } catch (err) {
       if (err.response.status === 409) {
+        alert("User already exists, please Login");
         messageHandler("User already exists", "error");
       } else {
         messageHandler(`Something Went wrong: ${err.message}`, "error");

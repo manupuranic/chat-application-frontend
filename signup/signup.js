@@ -1,3 +1,4 @@
+const baseUrl = "http://localhost:3000";
 const signUpForm = document.getElementById("signUpForm");
 const msg = document.getElementById("message");
 
@@ -31,14 +32,14 @@ const signUpHandler = async (event) => {
       phone: phone.value,
       password: password.value,
     };
-    console.log(userDetails);
     try {
-      const response = await axios.post(`${baseUrl}/user/sign-up`, userDetails);
+      const response = await axios.post(`${baseUrl}/user/signup`, userDetails);
+      console.log(response);
       const user = response.data;
       if (user.message) {
         messageHandler(response.data.message, "error");
       } else {
-        // console.log(user);
+        console.log(user);
         messageHandler("Signup successfull", "success");
         window.location.href = "../login/login.html";
         userName.value = "";
@@ -47,7 +48,11 @@ const signUpHandler = async (event) => {
         password.value = "";
       }
     } catch (err) {
-      messageHandler(`Something Went wrong: ${err.message}`, "error");
+      if (err.response.status === 409) {
+        messageHandler("User already exists", "error");
+      } else {
+        messageHandler(`Something Went wrong: ${err.message}`, "error");
+      }
     }
   }
 };

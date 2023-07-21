@@ -11,11 +11,29 @@ body {
   display: flex;
 }
 
+.body-div h1 {
+  margin-top: 2rem;
+}
+
 #svg-image {
-  width: 70%;
+  width: 80%;
   position: relative;
-  top: 30%;
-  bottom: 0;
+  top: 10%;
+  animation: shake 1s;
+  animation-iteration-count: infinite;
+  transition-timing-function: ease-in-out;
+}
+
+@keyframes shake {
+  0% {
+    transform: translateY(1px);
+  }
+  50% {
+    transform: translateY(-3px);
+  }
+  100% {
+    transform: translateY(1px);
+  }
 }
 
 .navbar {
@@ -32,11 +50,17 @@ body {
 }
 
 .container {
-  margin: 2rem auto;
-  margin-right: 2rem;
+  background-color: #ffffff;
+  margin: 2rem auto 1rem auto;
   padding: 2rem;
   border: 2px solid #0171cd;
+  width: 80%;
+}
+
+.form-body {
   width: 40%;
+  background-color: #0171cd;
+  height: 100vh;
 }
 
 input {
@@ -44,7 +68,7 @@ input {
 }
 
 label {
-  margin-top: 10px;
+  margin-top: 5px;
 }
 
 .heading {
@@ -59,11 +83,11 @@ label {
 }
 
 .btn:hover {
-  background-color: #0171cd;
+  background-color: #0180e8;
   color: white;
 }
 
-@media (max-width: 600px) {
+@media (max-width: 900px) {
   .btn {
     width: 100%;
   }
@@ -72,12 +96,19 @@ label {
     width: 90%;
   }
 
-  #svg-image {
+  .body-div {
     display: block;
-    position: absolute;
-    left: 20%;
+  }
+  .form-body {
+    padding-top: 10%;
+    width: 100vw;
+  }
+  #svg-image {
+    display: none;
+    /* position: absolute;
     z-index: -1000;
     opacity: 0.2;
+    width: 100%; */
   }
 }
 
@@ -100,5 +131,5 @@ label {
 }
 
 .page:hover {
-  color: #0171cd;
+  color: #0180e8;
 }

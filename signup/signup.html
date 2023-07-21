@@ -24,48 +24,62 @@
     <link rel="stylesheet" href="../style.css" />
   </head>
   <body>
-    <nav class="navbar navbar-expand-lg">
+    <!-- <nav class="navbar navbar-expand-lg">
       <div class="container-fluid">
         <a class="navbar-brand" href="#">Chat Application</a>
       </div>
-    </nav>
+    </nav> -->
     <main>
       <div class="body-div">
         <div class="chat-image">
+          <h1 class="heading">Mchat App</h1>
           <img
             src="../assets/undraw_texting_re_l11n.svg"
             id="svg-image"
             alt="chat"
           />
         </div>
-        <div class="container rounded signup-form shadow-sm">
-          <h2 class="heading">Sign Up</h2>
-          <p class="" id="message">test</p>
-          <form action="" method="POST" id="signUpForm">
-            <label for="username" class="form-label">UserName:</label>
-            <input
-              type="text"
-              name="userName"
-              id="username"
-              class="form-control"
-              autofocus="true"
-            />
-            <label for="email" class="form-label">Email:</label>
-            <input type="email" name="email" id="email" class="form-control" />
-            <label for="phone" class="form-label">Phone:</label>
-            <input type="number" name="phone" id="phone" class="form-control" />
-            <label for="password" class="form-label">Password:</label>
-            <input
-              type="password"
-              name="password"
-              id="password"
-              class="form-control"
-            />
-            <input type="submit" value="Sign Up" class="btn btn-lg rounded" />
-            <p>
-              Existing user? <a href="./login/login.html" class="page">Login</a>
-            </p>
-          </form>
+        <div class="form-body">
+          <div class="container rounded signup-form shadow-sm">
+            <h2 class="heading">Sign Up</h2>
+            <p class="" id="message">test</p>
+            <form action="" method="POST" id="signUpForm">
+              <label for="username" class="form-label">UserName:</label>
+              <input
+                type="text"
+                name="userName"
+                id="username"
+                class="form-control"
+                autofocus="true"
+              />
+              <label for="email" class="form-label">Email:</label>
+              <input
+                type="email"
+                name="email"
+                id="email"
+                class="form-control"
+              />
+              <label for="phone" class="form-label">Phone:</label>
+              <input
+                type="number"
+                name="phone"
+                id="phone"
+                class="form-control"
+              />
+              <label for="password" class="form-label">Password:</label>
+              <input
+                type="password"
+                name="password"
+                id="password"
+                class="form-control"
+              />
+              <input type="submit" value="Sign Up" class="btn btn-lg rounded" />
+              <p>
+                Existing user?
+                <a href="../login/login.html" class="page">Login</a>
+              </p>
+            </form>
+          </div>
         </div>
       </div>
     </main>

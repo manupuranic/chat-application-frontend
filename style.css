@@ -133,3 +133,46 @@ label {
 .page:hover {
   color: #0180e8;
 }
+
+.list-group-item {
+  border: none;
+  margin-top: 0.5rem;
+}
+
+.left {
+  background-color: #f9fcff;
+  width: fit-content;
+}
+
+.right {
+  background-color: #0171cd;
+  width: fit-content;
+  color: #ffffff;
+}
+
+#send-message {
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.message-send input {
+  display: inline;
+  height: 10%;
+}
+
+.message-send button {
+  display: inline;
+  margin-top: 0;
+}
+
+#message-container {
+  height: 75vh;
+  overflow-y: scroll;
+}
+
+.form-container {
+  margin: 0.5rem auto 0 auto;
+  width: 90%;
+}

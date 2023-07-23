@@ -3,6 +3,7 @@ const form = document.getElementById("send-message");
 const token = localStorage.getItem("token");
 const profile = document.getElementById("profile");
 const tableBody = document.getElementById("table-body");
+const messageContainer = document.getElementById("message-container");
 
 if (!token) {
   window.location.href = "./login/login.html";
@@ -46,6 +47,7 @@ const displayChats = (chat) => {
 };
 
 const getChats = async () => {
+  tableBody.replaceChildren();
   try {
     const response = await axios.get(`${baseUrl}/chat`, {
       headers: { Authentication: token },
@@ -66,6 +68,8 @@ const onLoad = () => {
 };
 
 window.addEventListener("DOMContentLoaded", onLoad);
+
+setInterval(getChats, 1000);
 
 const submitHandler = async (e) => {
   e.preventDefault();

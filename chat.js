@@ -3,7 +3,6 @@ const form = document.getElementById("send-message");
 const token = localStorage.getItem("token");
 const profile = document.getElementById("profile");
 const tableBody = document.getElementById("table-body");
-const messageContainer = document.getElementById("message-container");
 
 if (!token) {
   window.location.href = "./login/login.html";
@@ -48,14 +47,27 @@ const displayChats = (chat) => {
 
 const getChats = async () => {
   tableBody.replaceChildren();
+  let localMessages = JSON.parse(localStorage.getItem("messages"));
+  const lastMsgId = localMessages
+    ? localMessages[localMessages.length - 1].id
+    : -1;
   try {
-    const response = await axios.get(`${baseUrl}/chat`, {
+    const response = await axios.get(`${baseUrl}/chat?lastMsgId=${lastMsgId}`, {
       headers: { Authentication: token },
     });
     const chats = response.data.chats;
-    chats.forEach((chat) => {
+    if (localMessages) {
+      localMessages = [...localMessages, ...chats];
+    } else {
+      localMessages = [...chats];
+    }
+    localMessages.forEach((chat) => {
       displayChats(chat);
     });
+    while (localMessages.length > 10) {
+      localMessages.shift();
+    }
+    localStorage.setItem("messages", JSON.stringify(localMessages));
   } catch (err) {
     console.log(err);
   }

@@ -5,6 +5,8 @@
 
 body {
   font-family: "Poppins", sans-serif;
+  overflow-y: scroll;
+  overflow: hidden;
 }
 
 .body-div {
@@ -105,10 +107,21 @@ label {
   }
   #svg-image {
     display: none;
-    /* position: absolute;
-    z-index: -1000;
-    opacity: 0.2;
-    width: 100%; */
+  }
+  .send-btn {
+    width: 20%;
+  }
+  #user-container {
+    top: 10%;
+  }
+  #menu {
+    display: block;
+    width: fit-content;
+  }
+  #chat-body {
+    display: block;
+    width: 80vw;
+    margin-top: 0;
   }
 }
 
@@ -134,45 +147,126 @@ label {
   color: #0180e8;
 }
 
-.list-group-item {
-  border: none;
-  margin-top: 0.5rem;
+.user-profile {
+  color: #0171cd;
 }
 
-.left {
+.others {
   background-color: #f9fcff;
   width: fit-content;
+  margin-top: 0.5rem;
+  padding: 5px;
 }
 
-.right {
+.right td {
+  text-align: right;
+}
+
+.you {
   background-color: #0171cd;
-  width: fit-content;
   color: #ffffff;
+  width: fit-content;
+  margin-top: 1%;
+  padding: 5px;
 }
 
 #send-message {
-  margin-top: 1rem;
+  margin-top: 10px;
+  width: 100%;
   display: flex;
-  flex-direction: row;
-  justify-content: space-between;
 }
 
 .message-send input {
   display: inline;
+  width: 90%;
   height: 10%;
+  border: 2px solid #0171cd;
 }
 
 .message-send button {
   display: inline;
+  height: fit-content;
+  padding: 4px;
   margin-top: 0;
+  margin-left: 4px;
+}
+
+.message-send span {
+  font-weight: 500;
+  font-size: x-large;
+}
+
+#chat-body {
+  position: relative;
+  height: 90vh;
+  display: inline-flex;
+}
+
+#user-container {
+  position: absolute;
+  background-color: #f9fcff;
+  top: 0%;
+  left: 55px;
+  z-index: 999;
+  height: 100%;
+  overflow-y: scroll;
+}
+
+.users {
+  cursor: pointer;
+}
+
+.users:hover {
+  background-color: #0180e8;
+  color: #ffffff;
+}
+
+#chat-container {
+  width: 100%;
+  margin-left: 1rem;
 }
 
 #message-container {
-  height: 75vh;
+  height: 80%;
   overflow-y: scroll;
 }
 
 .form-container {
   margin: 0.5rem auto 0 auto;
-  width: 90%;
+  width: 100%;
+}
+
+/* Scroll functions */
+
+#message-container::-webkit-scrollbar {
+  width: 0.5rem;
+}
+
+#message-container::-webkit-scrollbar-track {
+  background: #f1f1f100;
+}
+
+#message-container::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  background-color: #0171cd;
+  outline: 1px solid #ffffff;
+}
+
+#user-container::-webkit-scrollbar {
+  width: 0.5rem;
+}
+
+#user-container::-webkit-scrollbar-track {
+  background: #f1f1f100;
+}
+
+#user-container::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  background-color: #0171cd;
+  outline: 1px solid #ffffff;
+}
+
+#menu {
+  margin-left: 5px;
+  display: inline-flex;
 }

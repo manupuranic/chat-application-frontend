@@ -89,6 +89,23 @@ label {
   color: white;
 }
 
+#logout {
+  background-color: rgb(222, 4, 4);
+  margin-left: 10px;
+}
+
+#logout:hover {
+  background-color: red;
+}
+
+#newgroup {
+  margin-left: 10px;
+}
+
+td {
+  width: 50%;
+}
+
 @media (max-width: 900px) {
   .btn {
     width: 100%;
@@ -122,6 +139,13 @@ label {
     display: block;
     width: 80vw;
     margin-top: 0;
+  }
+  #logout {
+    margin-left: 0;
+  }
+
+  #newgroup {
+    margin-left: 0;
   }
 }
 

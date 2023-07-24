@@ -29,7 +29,8 @@
       integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
       crossorigin="anonymous"
     ></script>
-    <link rel="stylesheet" href="./style.css" />
+    <link rel="stylesheet" href="../style.css" />
+    <link rel="stylesheet" href="./new-group.css" />
   </head>
   <body>
     <main>
@@ -39,7 +40,6 @@
           type="button"
           data-bs-toggle="collapse"
           data-bs-target="#user-container"
-          id="menu-btn"
         >
           <span class="material-symbols-outlined"> menu </span>
         </button>
@@ -47,68 +47,29 @@
       <div id="user-container" class="collapse collapse-horizontal rounded">
         <div id="collapse-div" style="width: 300px">
           <h2 class="heading" class="rounded">Mchat App</h2>
-          <button class="btn" id="newgroup">New Group</button>
           <ul class="list-group" id="group-list"></ul>
         </div>
         <div><button class="btn btn-danger" id="logout">Logout</button></div>
       </div>
 
-      <div class="container rounded w-100" id="chat-body">
-        <div id="chat-container">
-          <div>
-            <h4 class="user-profile" id="profile"></h4>
-            <hr />
-          </div>
-          <div id="message-container">
-            <table class="table table-borderless">
-              <tbody id="table-body">
-                <!-- <tr>
-                  <td>
-                    <span class="others rounded shadow-sm">test: hello</span>
-                  </td>
-                  <td></td>
-                </tr>
-                <tr class="right">
-                  <td></td>
-                  <td>
-                    <span class="you rounded shadow-sm">you: how are you?</span>
-                  </td>
-                </tr>
-                <tr class="right">
-                  <td></td>
-                  <td><span class="you rounded shadow-sm">you: hi</span></td>
-                </tr>
-                <tr class="right">
-                  <td></td>
-                  <td><span class="you rounded shadow-sm">you: hi</span></td>
-                </tr>
-                <tr>
-                  <td>
-                    <span class="others rounded shadow-sm">test: hello</span>
-                  </td>
-                  <td></td>
-                </tr>
-                <tr class="right">
-                  <td></td>
-                  <td><span class="you rounded shadow-sm">you: hi</span></td>
-                </tr> -->
-              </tbody>
-            </table>
-          </div>
-          <div class="form-container">
-            <div class="message-send">
-              <form method="POST" id="send-message">
-                <input type="text" class="form-control" name="message" />
-                <button type="submit" class="btn send-btn">
-                  <span class="material-symbols-rounded"> send </span>
-                </button>
-              </form>
-            </div>
-          </div>
+      <div class="container rounded shadow-sm w-100" id="groupwindow">
+        <div id="group-form">
+          <h3 class="heading">New Group</h3>
+          <p class="" id="message">test</p>
+          <form action="" id="groupDetailsForm">
+            <label for="groupName" class="form-label">Group Name:</label>
+            <input type="text" name="groupName" class="form-control" />
+            <input type="submit" value="Next" class="btn" />
+          </form>
+        </div>
+        <div class="" id="users-model">
+          <h3 class="heading">Select Users</h3>
+          <ul class="list-group" id="user-list"></ul>
+          <div><button class="btn" id="save">Save</button></div>
         </div>
       </div>
     </main>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    <script src="./chat.js"></script>
+    <script src="./new-group.js"></script>
   </body>
 </html>

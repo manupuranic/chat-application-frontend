@@ -7,21 +7,33 @@ const logout = document.getElementById("logout");
 const newGroup = document.getElementById("newgroup");
 const groupList = document.getElementById("group-list");
 const menuBtn = document.getElementById("menu-btn");
+const messageContainer = document.getElementById("message-container");
+const info = document.getElementById("info");
+const infoDiv = document.getElementById("info-div");
+const memberCount = document.getElementById("member-count");
+const membersList = document.getElementById("members-list");
+const settings = document.getElementById("settings");
+const brand = document.getElementById("brand");
+const header = document.querySelector(".header");
+
+if (!token) {
+  window.location.href = "./login/login.html";
+}
+const currentUser = parseJwt(token);
 
 logout.addEventListener("click", () => {
   localStorage.removeItem("token");
   localStorage.removeItem("currentGpId");
   localStorage.removeItem("newGroupId");
+  localStorage.removeItem("messages");
+  localStorage.removeItem("newGroupName");
+  localStorage.removeItem("currentGpName");
   window.location.href = "./login/login.html";
 });
 
 newGroup.addEventListener("click", () => {
   window.location.href = "./newgroup/new-group.html";
 });
-
-if (!token) {
-  window.location.href = "./login/login.html";
-}
 
 function parseJwt(token) {
   var base64Url = token.split(".")[1];
@@ -68,7 +80,9 @@ const openGroupChat = (e) => {
   profile.replaceChildren();
   profile.appendChild(document.createTextNode(gpName));
   localStorage.setItem("messages", JSON.stringify([]));
+  header.style.display = "flex";
   getChats();
+  getMembers();
   menuBtn.click();
 };
 
@@ -97,6 +111,8 @@ const getChats = async () => {
   tableBody.replaceChildren();
   const gpId = localStorage.getItem("currentGpId");
   if (gpId) {
+    header.style.display = "flex";
+    form.style.display = "block";
     let localMessages = JSON.parse(localStorage.getItem("messages"));
     const lastMsgId = localMessages.length
       ? localMessages[localMessages.length - 1].id
@@ -131,17 +147,15 @@ const getChats = async () => {
     }
   } else {
     tableBody.innerHTML = `
-    <tr><td><h1 class='heading'>Mchat App</h1></td></tr>
-    <tr><td><h3 style="text-align: center">No group selected</h3></td></tr>`;
+    <tr><td><h1 class='heading'>Welcome to Mchat App</h1></td></tr>
+    <tr><td><h3 style="text-align: center">select a group to view messages</h3></td></tr>`;
   }
 };
 
 const onLoad = () => {
   const gpName = localStorage.getItem("currentGpName");
-  profile.replaceChildren();
-  if (gpName) {
-    profile.appendChild(document.createTextNode(gpName));
-  }
+  profile.replaceChildren(gpName);
+  header.style.display = "none";
   getChats();
   getGroups();
 };
@@ -172,4 +186,77 @@ const submitHandler = async (e) => {
 
 form.addEventListener("submit", submitHandler);
 
-setInterval(getChats, 1000);
+const getMembers = async () => {
+  const gpId = localStorage.getItem("currentGpId");
+  membersList.replaceChildren();
+  try {
+    const response = await axios.get(
+      `${baseUrl}/groups/getmembers?gpId=${gpId}`,
+      {
+        headers: { Authentication: token },
+      }
+    );
+    const { members: users } = response.data;
+    const userCount = users.length;
+    memberCount.replaceChildren(document.createTextNode(userCount));
+    users.forEach((user) => {
+      const li = document.createElement("li");
+      const spanName = document.createElement("span");
+      const spanStatus = document.createElement("span");
+      li.id = user.id;
+      li.className = "list-group-item";
+      spanName.className = "member-name";
+      if (currentUser.id === user.id) {
+        spanName.appendChild(document.createTextNode("You"));
+      } else {
+        spanName.appendChild(document.createTextNode(user.name));
+      }
+      if (user.isAdmin) {
+        if (user.id === currentUser.id) {
+          settings.style.display = "block";
+        }
+        spanStatus.className = "status admin";
+        spanStatus.appendChild(document.createTextNode("Admin"));
+      } else {
+        spanStatus.className = "status member";
+        spanStatus.appendChild(document.createTextNode("Member"));
+      }
+      li.appendChild(spanName);
+      li.appendChild(spanStatus);
+      membersList.appendChild(li);
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const handleInfo = () => {
+  const infoDisplayInfo = infoDiv.style.display;
+  if (infoDisplayInfo !== "block") {
+    getMembers();
+    infoDiv.style.display = "block";
+  } else {
+    infoDiv.style.display = "none";
+  }
+};
+
+info.addEventListener("click", handleInfo);
+
+settings.addEventListener("click", () => {
+  const gpId = localStorage.getItem("currentGpId");
+  const gpName = localStorage.getItem("currentGpName");
+  localStorage.setItem("newGroupId", gpId);
+  localStorage.setItem("newGroupName", gpName);
+  window.location.href = "./editgroup/edit-group.html";
+});
+
+brand.addEventListener("click", () => {
+  header.style.display = "none";
+  localStorage.setItem("messages", []);
+  localStorage.removeItem("currentGpId");
+  localStorage.removeItem("currentGpName");
+  menuBtn.click();
+  getChats();
+  form.style.display = "none";
+});
+// setInterval(getChats, 1000);

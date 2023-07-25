@@ -9,16 +9,18 @@ const userList = document.getElementById("user-list");
 const groupList = document.getElementById("group-list");
 const menuBtn = document.getElementById("menu-btn");
 const saveBtn = document.getElementById("save");
+const groupName = document.getElementById("group-name");
+const groupNameInput = document.getElementById("groupNameinput");
 const brand = document.getElementById("brand");
+
+if (!token) {
+  window.location.href = "../login/login.html";
+}
 
 logout.addEventListener("click", () => {
   localStorage.removeItem("token");
   window.location.href = "./login/login.html";
 });
-
-if (!token) {
-  window.location.href = "../login/login.html";
-}
 
 function parseJwt(token) {
   var base64Url = token.split(".")[1];
@@ -68,6 +70,8 @@ const displayGroups = (group) => {
 };
 
 const getGroups = async () => {
+  const gpName = localStorage.getItem("newGroupName");
+  groupName.appendChild(document.createTextNode(gpName));
   try {
     const response = await axios.get(`${baseUrl}/groups`, {
       headers: { Authentication: token },
@@ -81,28 +85,42 @@ const getGroups = async () => {
   }
 };
 
-document.addEventListener("DOMContentLoaded", getGroups);
+document.addEventListener("DOMContentLoaded", () => {
+  const gpName = localStorage.getItem("newGroupName");
+  groupNameInput.value = gpName;
+  getGroups();
+  getUsers();
+});
 
 const deleteUserHandler = async (e) => {
-  const btn = e.target;
   const li = e.target.parentElement;
   const gpId = localStorage.getItem("newGroupId");
   const userId = li.id;
   try {
-    const response = await axios.delete(
+    await axios.delete(
       `${baseUrl}/new-group/delete-user?gpId=${gpId}&userId=${userId}`,
       { headers: { Authentication: token } }
     );
-    btn.textContent = "Add";
-    btn.removeEventListener("click", deleteUserHandler);
-    btn.addEventListener("click", addUserHandler);
+    await axios.get(
+      `${baseUrl}/admin/remove-admin?gpId=${gpId}&userId=${userId}`,
+      { headers: { Authentication: token } }
+    );
+    console.log(currentUser, userId);
+    if (currentUser.id === +userId) {
+      alert("You have exited the group");
+      localStorage.setItem("messages", []);
+      localStorage.removeItem("currentGpId");
+      localStorage.removeItem("currentGpName");
+      window.location.href = "../chat.html";
+    } else {
+      getUsers();
+    }
   } catch (error) {
     console.log(error);
   }
 };
 
 async function removeAdminHandler(e) {
-  const btn = e.target;
   const li = e.target.parentElement;
   const gpId = localStorage.getItem("newGroupId");
   const userId = li.id;
@@ -111,14 +129,13 @@ async function removeAdminHandler(e) {
       `${baseUrl}/admin/remove-admin?gpId=${gpId}&userId=${userId}`,
       { headers: { Authentication: token } }
     );
-    btn.innerText = "Make Admin";
-    btn.removeEventListener("click", removeAdminHandler);
-    btn.addEventListener("click", makeAdminHandler);
-  } catch (error) {}
+    getUsers();
+  } catch (error) {
+    console.log(error);
+  }
 }
 
 async function makeAdminHandler(e) {
-  const btn = e.target;
   const li = e.target.parentElement;
   const gpId = localStorage.getItem("newGroupId");
   const userId = li.id;
@@ -127,16 +144,13 @@ async function makeAdminHandler(e) {
       `${baseUrl}/admin/make-admin?gpId=${gpId}&userId=${userId}`,
       { headers: { Authentication: token } }
     );
-    btn.innerText = "Remove Admin";
-    btn.removeEventListener("click", makeAdminHandler);
-    btn.addEventListener("click", removeAdminHandler);
+    getUsers();
   } catch (error) {
     console.log(error);
   }
 }
 
 const addUserHandler = async (e) => {
-  const btn = e.target;
   const li = e.target.parentElement;
   const gpId = localStorage.getItem("newGroupId");
   const userId = li.id;
@@ -145,28 +159,46 @@ const addUserHandler = async (e) => {
       `${baseUrl}/new-group/add-user?gpId=${gpId}&userId=${userId}`,
       { headers: { Authentication: token } }
     );
-    const makeAdminBtn = document.createElement("button");
-    makeAdminBtn.className = "btn btn-admin add";
-    makeAdminBtn.appendChild(document.createTextNode("Make Admin"));
-    makeAdminBtn.addEventListener("click", makeAdminHandler);
-    li.appendChild(makeAdminBtn);
-    btn.innerText = "Remove";
-    btn.removeEventListener("click", addUserHandler);
-    btn.addEventListener("click", deleteUserHandler);
+    getUsers();
   } catch (error) {
     console.log(error);
   }
 };
 
-const displayUsers = (user) => {
-  if (currentUser.id !== user.id) {
-    const li = document.createElement("li");
-    const span = document.createElement("span");
-    const button = document.createElement("button");
-    li.id = user.id;
-    li.className = "list-group-item";
-    span.appendChild(document.createTextNode(user.userName));
-    button.className = "btn add";
+const displayUsers = (user, isMember) => {
+  const li = document.createElement("li");
+  const span = document.createElement("span");
+  const button = document.createElement("button");
+  li.id = user.id;
+  li.className = "list-group-item";
+  if (currentUser.id === user.id) {
+    span.appendChild(document.createTextNode("You"));
+  } else {
+    span.appendChild(document.createTextNode(user.name));
+  }
+  button.className = "btn add";
+  if (isMember) {
+    const AdminButton = document.createElement("button");
+    if (currentUser.id === user.id) {
+      button.appendChild(document.createTextNode("Exit Group"));
+    } else {
+      button.appendChild(document.createTextNode("Remove"));
+    }
+    button.addEventListener("click", deleteUserHandler);
+    AdminButton.className = "btn add btn-admin";
+
+    if (user.isAdmin) {
+      AdminButton.appendChild(document.createTextNode("Remove Admin"));
+      AdminButton.addEventListener("click", removeAdminHandler);
+    } else {
+      AdminButton.appendChild(document.createTextNode("Make Admin"));
+      AdminButton.addEventListener("click", makeAdminHandler);
+    }
+    li.appendChild(span);
+    li.appendChild(button);
+    li.appendChild(AdminButton);
+    userList.appendChild(li);
+  } else {
     button.appendChild(document.createTextNode("Add"));
     button.addEventListener("click", addUserHandler);
     li.appendChild(span);
@@ -177,13 +209,36 @@ const displayUsers = (user) => {
 
 const getUsers = async () => {
   userList.replaceChildren();
+  // get members first
+  const gpId = localStorage.getItem("newGroupId");
   try {
-    const response = await axios.get(`${baseUrl}/new-group/users`, {
-      headers: { Authentication: token },
-    });
-    const { users } = response.data;
+    const response = await axios.get(
+      `${baseUrl}/groups/getMembers?gpId=${gpId}`,
+      {
+        headers: { Authentication: token },
+      }
+    );
+    const { members: users } = response.data;
+    // console.log(users);
     users.forEach((user) => {
-      displayUsers(user);
+      displayUsers(user, true);
+    });
+  } catch (error) {
+    console.log(error);
+  }
+
+  //get non members
+  try {
+    const response = await axios.get(
+      `${baseUrl}/groups/getNonMembers?gpId=${gpId}`,
+      {
+        headers: { Authentication: token },
+      }
+    );
+    const { users } = response.data;
+    // console.log(users);
+    users.forEach((user) => {
+      displayUsers(user, false);
     });
   } catch (error) {
     console.log(error);
@@ -200,19 +255,17 @@ const submitHandler = async (e) => {
       groupName: groupName.value,
     };
     try {
-      const response = await axios.post(`${baseUrl}/new-group`, postDetails, {
-        headers: { Authentication: token },
-      });
-      console.log(response);
-      const gpId = response.data.gp.id;
-      const gpName = response.data.gp.name;
+      const gpId = localStorage.getItem("newGroupId");
+      const response = await axios.post(
+        `${baseUrl}/new-group/edit-group?gpId=${gpId}`,
+        postDetails,
+        {
+          headers: { Authentication: token },
+        }
+      );
       localStorage.setItem("newGroupId", gpId);
-      localStorage.setItem("newGroupName", gpName);
-      console.log(gpId);
-      groupName.value = "";
-      groupForm.style.display = "none";
-      userModal.style.display = "block";
-      getUsers();
+      localStorage.setItem("newGroupName", groupName.value);
+      messageHandler("Updated Group Name", "success");
     } catch (error) {
       console.log(error);
     }
